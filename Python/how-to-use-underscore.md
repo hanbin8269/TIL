@@ -34,7 +34,7 @@ for _ in range(10):
 ---
 ## 2. 특별한 값을 주고 싶을때
 
-### 1. `_single_leading_underscore` : 한 모듈 안에서만 사용하는 private 클래스/함수/변수/메서드를 선언할 때 쓰는 컨벤션 
+#### 1. `_single_leading_underscore` : 한 모듈 안에서만 사용하는 private 클래스/함수/변수/메서드를 선언할 때 쓰는 컨벤션 
 ```python
 _iternal_name = 'one_module'
 ```
@@ -50,7 +50,7 @@ def __init__(self,url):
     self._html = requests.get(url).text
     self._soup = BeautifulSoup(self._html, 'html.parser')
 ```
-### 2. `single_trailing_underscore_` : 파이썬 키워드 들과 충돌을 피하기 위해 사용하는 컨벤션
+#### 2. `single_trailing_underscore_` : 파이썬 키워드 들과 충돌을 피하기 위해 사용하는 컨벤션
 ```python
 # example 01
 icon_soup = self._soup.find('div', class_="asdfag")
@@ -59,7 +59,7 @@ icon_soup = self._soup.find('div', class_="asdfag")
 _list = [1,3,4]
 ```
 
-##### 3. `__double_leading_underscore` : 하위 클래스에서 이름 충돌을 피하기 위해 만들어진 문법
+#### 3. `__double_leading_underscore` : 하위 클래스에서 이름 충돌을 피하기 위해 만들어진 문법
 이 문법은 `맹글링(mangling)`을 하여 파이썬 인터프리터가 속성 이름을 다시 쓰도록 한다.
 ```python
 #example 01
@@ -84,7 +84,7 @@ t.__a
 ```
 AttributeError가 발생한다. 그렇기 때문에 **해당 클래스를 상속하는 하위 클래스에서 재정의 되는 것을 막을 수 있다**.
 
-### 4. `__double_leading_and_trailing_underscore__` : 파이썬에서 특수 용도로 사용한다. 특별한 메서드를 나타낸다 ex) `__init__`,`__str__` ...
+#### 4. `__double_leading_and_trailing_underscore__` : 파이썬에서 특수 용도로 사용한다. 특별한 메서드를 나타낸다 ex) `__init__`,`__str__` ...
 
 ---
 ## 3. I18n / L10n 함수로 쓸때
