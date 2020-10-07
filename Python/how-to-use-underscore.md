@@ -71,4 +71,28 @@ t = Test()
 dir(t)
 # ['_Test__a', '__class__', '__dict__' ...]
 ```
-위와같이 `_클래스__ `
+위와같이 `_클래스__변수`의 형태로 맹글링이 되었다. 여기서 __t 를 재정의 하고자 하면,
+```python
+#example 02
+class Test:
+    def __init__(self):
+        self.__a = 1
+
+t = Test()
+t.__a
+# AttributeError:
+```
+AttributeError가 발생한다. 그렇기 때문에 **해당 클래스를 상속하는 하위 클래스에서 재정의 되는 것을 막을 수 있다**.
+
+##### 4. `__double_leading_and_trailing_underscore__` : 파이썬에서 특수 용도로 사용한다. 특별한 메서드를 나타낸다 ex) `__init__`,`__str__` ...
+
+---
+## 3. I18n / L10n 함수로 쓸때
+```python
+import gettext
+
+_ = gettext.gettext
+
+print(_('This is a translatable string.'))
+```
+위와 같이 `gettext` 라이브러리를 이용해 컨벤션으로써 쓰인다.
