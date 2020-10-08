@@ -113,6 +113,12 @@ JWT_AUTH = {
 }
 
 DATABASES = config_secret_common["django"]["database"]
+
+
+# ============== 프로젝트 이름이 바뀌었기 때문에 아래처럼 변경해주자 =============
+
+ROOT_URLCONF = "config.urls"
+WSGI_APPLICATION = "config.wsgi.application"
 ```
 위와 같이 방금 만든 secret 파일을 적용시켜 주자
 
