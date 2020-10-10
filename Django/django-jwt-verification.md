@@ -35,29 +35,36 @@ AUTH_USER_MODEL = "account.User" # "앱.모델이름"
 from rest_framework import serializers
 from .models import User
 from django.contrib.auth import authenticate
+from rest_framework_jwt import utils
+from django.utils.translation import ugettext as _
+import jwt
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password")
+        fields = ("username", "email", "password")
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        return User.objects.create(**validated_data)
+        return User.objects.create_user(**validated_data)
 
 
-class LoginUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("id", "password")
-        extra_kwargs = {"password": {"write_only": True}}
+class LoginUserSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
 
-    def validate(self, data): # 여기서 JWT를 처리할거다
-        user = authenticate(**data)
+
+    def validate(self, data):
+        credentials = {"email": data["email"], "password": data["password"]}
+        user = authenticate(**credentials)
+
         if user and user.is_active:
-            return user # JWT를 추가한다면, (user,token)으로 튜플로 넘겨줄 것이다
-        raise serializers.ValidationError("Unable to login with provided credentials")
+            return user
+
+        msg = _("Unable to login with provided credentials")
+        raise serializers.ValidationError(msg)
+    
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -65,10 +72,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "username", "email")
 ```
-근데 여기서 jwt 인증을 처리하기 위해서는 `LoginUserSerializer`에 몇가지를 추가해줘야 한다.
+여기서 jwt 인증을 처리하기 위해서는 `LoginUserSerializer`에 몇가지를 추가해줘야 한다.
 
 ## 3. JWT 인증 추가하기
-이 글을 쓴 이유이자 본론이다.
+이 글을 쓴 이유다.
 `restframework-jwt`의 `utils.py` 코드를 보면 `jwt_encode_handler`메서드가 있다.
 ```python
 # rest_framework_jwt\utils.py
@@ -91,38 +98,91 @@ from rest_framework_jwt import utils
 from django.utils.translation import ugettext as _ # 추가 (지역에 맞춰 각국의 언어로 번역해주는 라이브러리라고 한다. 공부해봐야겠다)
 import jwt # 추가
 
-class LoginUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("id", "password")
-        extra_kwargs = {"password": {"write_only": True}}
-
-    def _check_payload(self, token): # 만든 token이 유효한지 확인해 준다
-        try:
-            payload = utils.jwt_decode_handler(token)
-        except jwt.ExpiredSignature:
-            msg = _("Signature has expired.")
-            raise serializers.ValidationError(msg)
-        except jwt.DecodeError:
-            mas = _("Error decoding signature.")
-            raise serializers.ValidationError(msg)
-
-        return payload
+class LoginUserSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
 
     def validate(self, data):
-        user = authenticate(**data)
+        credentials = {"email": data["email"], "password": data["password"]}
+        user = authenticate(**credentials)
 
         if user and user.is_active:
-            token = utils.jwt_encode_handler(user)
+            payload = {"id": user.id, "email": user.email, "username": user.username} # token에 넣을 값 생성
 
-            self._check_payload(token) 
+            token = utils.jwt_encode_handler(payload) # encode
 
-            return (user, token) # 튜플로 보내주자
+            return (user, token)
 
         msg = _("Unable to login with provided credentials")
         raise serializers.ValidationError(msg)
 ```
-만든 token에 이상이 있으면 안되기 때문에 메서드를 하나 추가해 주었다.
-
+여기서 사용된 `authenticate` 메서드를 쓰기 위해서는 `base.py` 또는 `settings.py`에 `AUTHENTICATION_BACKENDS`를 추가해줘야 한다.
+```python
+# base.py or settings.py
+    ...
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  # Django가 관리하는 AUTH
+]
+```
 ## 4. View 
-view는 내일 써야겠다.
+```python
+from rest_framework import generics, status
+from .serializers import CreateUserSerializer, LoginUserSerializer, UserSerializer
+from rest_framework.response import Response
+
+class RegistrationView(generics.GenericAPIView):
+    serializer_class = CreateUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        if len(request.data["password"]) < 6:
+            message = {"message": "password is too short"}
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        return Response({"user": UserSerializer(user).data})
+
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, token = serializer.validated_data
+
+        return Response({"user": UserSerializer(user).data, "token": token})
+```
+여기서 `serailizer.validated_data`에 어떻게 값이 들어가는지 궁금해서 코드를 봤더니
+```python
+# restframework/serializers.py
+
+def is_valid(self, raise_exception=False):
+    assert hasattr(self, "initial_data"), (
+        "Cannot call `.is_valid()` as no `data=` keyword argument was "
+        "passed when instantiating the serializer instance."
+    )
+
+    if not hasattr(self, "_validated_data"):
+        try:
+            self._validated_data = self.run_validation(self.initial_data)
+        except ValidationError as exc:
+            self._validated_data = {}
+            self._errors = exc.detail
+        else:
+            self._errors = {}
+        
+    if self._errors and raise_exception:
+        raise ValidationError(self.errors)
+    return not bool(self._errors)
+
+@property
+def validated_data(self): # validated_data getter
+    if not hasattr(self, "_validated_data"):
+        msg = "You must call `.is_valid()` before accessing `validated_data`."
+        raise AssertionError(msg)
+    return self._validated_data
+```
+`is_valid`메서드를 실행하면 `self._validated_data`에 리턴값을 넣어주는데, `@property` 데코레이터를 사용해서 getter를 만들어 놨다
