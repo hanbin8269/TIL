@@ -35,99 +35,79 @@ class LoginUserSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError(msg)
 ```
 
-[django-rest-framework 깃허브 serializers.py](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py) 의 `ModelSerializer` 와 `Serializer` 클래스를 비교해보면 `ModelSerializer`은 `Serializer`를 상속받아 `create` , `update` 등의 메서드를 오버라이딩한 형태이다.
-
-`rest_framework/serializers.py` 를 보면 
+[django-rest-framework 깃허브 serializers.py](https://github.com/encode/django-rest-framework/blob/master/rest_framework/serializers.py) 의 `ModelSerializer` 와 `Serializer` 클래스를 비교해보면 `ModelSerializer`은 `Serializer`를 상속받아 `create` , `update` 등의 메서드를 오버라이딩하고 여러 메서드를 추가한 형태이다.
 ```python
-# rest_framework/serializers.py
+class LoginUserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+    # 이것들은 declared_fields에 들어가게 된다
 
+    class Meta:
+        model = User
+        fields = ("email", "password")
+
+    def validate(self, data):
+        credentials = {"email": data["email"], "password": data["password"]}
+        user = authenticate(**credentials)
+
+        if user and user.is_active:
+            payload = {"id": user.id, "email": user.email}
+
+            token = utils.jwt_encode_handler(payload)
+
+            return (user, token)
+
+        msg = _("Unable to login with provided credentials")
+        raise serializers.ValidationError(msg)
+```
+그런데 이렇게 바꿔주면 해결이 된다. 그 이유가 뭘까?
+```python
+# rest_framework/utils/field_mapping.py
 class ModelSerializer(Serializer):
+    ...
+    def get_fields(self):
+        ...
+        for field_name in field_names:
+            # If the field is explicitly declared on the class then use that.
+            if field_name in declared_fields: # 여기
+                fields[field_name] = declared_fields[field_name]
+                continue
 
-    serializer_field_mapping = {
-        models.AutoField: IntegerField,
-        models.BigIntegerField: IntegerField,
-        models.BooleanField: BooleanField,
-        models.CharField: CharField,
-        models.CommaSeparatedIntegerField: CharField,
-        models.DateField: DateField,
-        models.DateTimeField: DateTimeField,
-        models.DecimalField: DecimalField,
-        models.DurationField: DurationField,
-        models.EmailField: EmailField, # 여기!
-        models.Field: ModelField,
-        models.FileField: FileField,
-        models.FloatField: FloatField,
-        models.ImageField: ImageField,
-        models.IntegerField: IntegerField,
-        models.NullBooleanField: BooleanField,
-        models.PositiveIntegerField: IntegerField,
-        models.PositiveSmallIntegerField: IntegerField,
-        models.SlugField: SlugField,
-        models.SmallIntegerField: IntegerField,
-        models.TextField: CharField,
-        models.TimeField: TimeField,
-        models.URLField: URLField,
-        models.UUIDField: UUIDField,
-        models.GenericIPAddressField: IPAddressField,
-        models.FilePathField: FilePathField,
-    } 
+            extra_field_kwargs = extra_kwargs.get(field_name, {})
+            source = extra_field_kwargs.get("source", "*")
+            if source == "*":
+                source = field_name
 
+            # Determine the serializer field class and keyword arguments.
+            field_class, field_kwargs = self.build_field(source, info, model, depth)
+            # Include any kwargs defined in `Meta.extra_kwargs`
+            field_kwargs = self.include_extra_kwargs(field_kwargs, extra_field_kwargs)
+            # Create the serializer field.
+            fields[field_name] = field_class(**field_kwargs)
     ...
 ```
-가 있는데,
+`if field_name in declared_fields`에서 내가 선언했던 `email`,`password` 필드를 `fields[field_name] = declared_fields[field_name]`으로 `fields`변수에 넣고 continue를 했기 때문에 `build_field()`메서드가 실행되지 않아 Meta에서 만든 변수가 적용되지 않았던 것이다.
+만약 `build_field()`메서드가 실행된다면,
+`build_field()` -> `build_standard_field()` -> `get_field_kwargs()` 에서
 ```python
-# rest_framework/serializers.py
+# rest_framework/utils/field_mapping.py
 
-class Serializer(BaseSerializer, metaclass=SerializerMetaclass):
-  ...
-
-  def to_internal_value(self, data):  # check!
-          """
-          Dict of native values <- Dict of primitive datatypes.
-          """
-          if not isinstance(data, Mapping):
-              message = self.error_messages["invalid"].format(
-                  datatype=type(data).__name__
-              )
-              raise ValidationError(
-                  {api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="invalid"
-              )
-
-          ret = OrderedDict()
-          errors = OrderedDict()
-          fields = self._writable_fields
-          
-
-          # 여기서 부터
-          for field in fields:
-              validate_method = getattr(self, "validate_" + field.field_name, None)
-              primitive_value = field.get_value(data)
-              try:
-                  validated_value = field.run_validation(primitive_value) # 여기!
-                  if validate_method is not None:
-                      validated_value = validate_method(validated_value)
-              except ValidationError as exc:
-                  # exc : <UniqueValidator(queryset=User.objects.all())>
-                  errors[field.field_name] = exc.detail
-              except DjangoValidationError as exc:
-                  errors[field.field_name] = get_error_detail(exc)
-              except SkipField:
-                  pass
-              else:
-                  set_value(ret, field.source_attrs, validated_value)
-          # 여기까지 잘 보자
-
-          if errors:
-              raise ValidationError(errors)
-
-          return ret
-
-      ...
+def get_field_kwargs(field_name, model_field):
+    ...
+    if getattr(model_field, "unique", False):
+        unique_error_message = model_field.error_messages.get("unique", None)
+        if unique_error_message:
+            unique_error_message = unique_error_message % {
+                "model_name": model_field.model._meta.verbose_name,
+                "field_label": model_field.verbose_name,
+            }
+        validator = UniqueValidator(
+            queryset=model_field.model._default_manager, message=unique_error_message
+        )
+        validator_kwarg.append(validator)
+    ...
 ```
-표시해둔 부분을 보면 field들이 `run_validation(primitive_value)`을 수행하는데, 이중에 `EmailField`도 있다.
-오류나는 부분은 `<UniqueValidator(queryset=User.objects.all())>`에서 검출된 부분이다.
-
-
+함수를 실행하여 `unique=True`인 필드의 `validator`를 `UniqueValidator`로 지정하여 줄 것이다.
 ```python
 # rest_framework/validators.py
 
@@ -148,9 +128,10 @@ class UniqueValidator:
         raise ValidationError(self.message, code="unique")
   ...
 ```
-위와 같이 `unique = True` 속성이 붙은 값들은 모두 걸러주는 역할을 하는데, 여기서 걸리나보다.
+위와 같이 `UniqueValidator`는 `unique = True` 속성이 붙은 값들은 중복을 걸러주는 역할을 하는데 한다.
+
 
 ------------
 ## 결론
 
-`ModelSerializer`를 쓰면 `EmailField`를 가져오기 때문에 `UniqueValidator`를 처리하기 때문에 오류가 걸리게 된다
+`ModelSerializer`의 `get_fields()`메서드에서 `build_field()` -> `build_standard_field()` -> `get_field_kwargs()`의 순서로 메서드를 실행 시켜 미리 필드를 선언하지 않고 Meta클래스에 `fields = ("email")`같은 형태로 넣었다면 필드 `validator`에 `UniqueValidator`가 추가되어 중복을 허용하지 않게 된다.
