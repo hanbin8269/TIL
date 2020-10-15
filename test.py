@@ -1,19 +1,12 @@
-class Test():
-    def __init__(self):
-        self.aaa = 1
-        self._bbb = 2
-        self.__ccc = 3
-    
-    def hello(self):
-        print('hello')
+a = {1,2,3,4,5,6}
 
-t = Test()
+# 값 추가
+a.add(7)
 
-setattr(t,'aaa',123)
-print(t.aaa)
+# 값 여러개 추가
+a.update([8,9,10,11])
 
-def callback():
-    print('goodbye :)')
-
-setattr(t,'hello',callback)
-t.hello()
+# 값 제거
+a.remove(10)
+for i in a:
+    print(i)
