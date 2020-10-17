@@ -1,8 +1,6 @@
 import re
 
-obj = re.search('he','hello!')
-
-print(obj.group())
-print(obj.start())
-print(obj.end())
-print(obj.span())
+p = re.compile('l*')
+print(p.findall('loool'))
+print(p.findall('l&l'))
+print(p.findall('asd'))
