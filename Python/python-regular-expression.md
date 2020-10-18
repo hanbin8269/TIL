@@ -57,3 +57,42 @@ print(p.findall('l&l'))
 # ['l&l']
 ```
 `a.b`는 a와 b사이에 하나의 어떤 문자가 들어오든 매칭된다. 단, 개행문자(`\n`)는 제외한다
+
+## * 반복
+```python
+p = re.compile('l*')
+
+print(p.findall('loool'))
+# ['l', '', '', '', 'l', '']
+print(p.findall('l&l'))
+# ['l', '', 'l', '']
+print(p.findall('asd'))
+# ['', '', '', '']
+```
+\* 앞에 있는 문자가 **몇개가 오든 (0개도 포함)** 모두 매치된다
+
+## + 한 번 이상 반복
+```python
+p = re.compile('l+ ')
+
+print(p.findall('loool'))
+# ['l', 'l']
+print(p.findall('l&l'))
+# ['l', 'l']
+print(p.findall('asd'))
+# []
+```
+\+ 앞에 있는 문자가 **최소 한번 이상 반복** 되어야 매치된다
+
+## ? 없거나 하나만 있거나
+```python
+p = re.compile('ba?d')
+
+print(p.findall('bd'))
+# ['bd']
+print(p.findall('bad'))
+# ['bad']
+print(p.findall('baaaaaaad'))
+# []
+```
+\? 앞에 있는 문자가 **없거나 하나만 있거나**일때 매치된다. 두개 이상은 안된다

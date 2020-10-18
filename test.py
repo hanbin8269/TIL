@@ -1,6 +1,7 @@
 import re
 
-p = re.compile('l*')
-print(p.findall('loool'))
-print(p.findall('l&l'))
-print(p.findall('asd'))
+p = re.compile('ba?d')
+
+print(p.findall('bd'))
+print(p.findall('bad'))
+print(p.findall('baaaaaaad'))
