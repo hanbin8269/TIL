@@ -14,7 +14,7 @@
 
 ## 동작 방식
 ![출처 :  https://en.wikipedia.org/wiki/Cross-origin_resource_sharing](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fcs4wto%2FbtqzZKoD3Mi%2FWcisEe9B1vsXyZCtzbO150%2Fimg.png)
->출처 : https://en.wikipedia.org/wiki/Cross-origin_resource_sharing``
+>출처 : https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
 
 1. `Access-Control-Request-Method`, `Access-Control-Request-Headers`헤더를 추가해 `OPTIONS` 메서드로 사전 요청을 보낸다
 2. 서버에서  `Access-Control-Allow-Methods`헤더로 `POST`, `GET`, `OPTIONS` 메서드로 자원에 접근 가능 하다는 응답을 준다
