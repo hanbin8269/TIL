@@ -23,3 +23,9 @@
 
 ## OAuth 처리 과정
 ![what-is-OAuth-02](../images/what-is-OAuth-02.png)
+
+1. 사용자가 `Client`에 로그인 요청을 보내고 `Client`가 `Authorization Server` 에게 로그인 페이지를 요청한다.
+2. 사용자가 `Authorization Server`에서 로그인을 마친다면 `Authorization Code`를 발급한다.
+3. `Authorization Code`으로 `Access Token`을 발급하기 위해 요청한다.
+4. `Access Token`을 발급해준다.
+5. 나중에 `Access Token`과 함께 API를 요청하면 `Resource Server`에서 확인하고 응답해준다.
