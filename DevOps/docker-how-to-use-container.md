@@ -60,8 +60,36 @@ Server: Docker Engine - Community
 - `-d` : `detached mode` 흔히 말하는 백그라운드 모드
 - `-p` : 호스트와 컨테이너의 포트를 연결(포워딩)
 - `-v` : 호스트와 컨테이너의 디렉토리를 연결 (마운트)
-- `-e` : 컨테이너 내에 사용할 환경변수 설정
+- `-e` : 컨테이너 내에 사용할 환경변수 설정0
 - `--name` : 컨테이너 이름 설정
 - `--rm` : 프로세스 종료 시 컨테이너 자동 제거
 - `-it` : `-i`와 `-t`를 동시에 사용한 것으로 터미널 입력을 위한 옵션
 - `--network` : 네트워크 연결
+
+##### ex)
+```
+> docker run --rm -it ubuntu:16.04 /bin/sh
+
+Unable to find image 'ubuntu:16.04' locally
+16.04: Pulling from library/ubuntu
+2c11b7cecaa5: Pull complete
+04637fa56252: Pull complete
+d6e6af23a0f3: Pull complete
+b4a424de92ad: Pull complete
+Digest: sha256:bb69f1a2\
+Status: Downloaded newer image for ubuntu:16.04
+#
+```
+위 명령어는 `ubuntu:16.04`이미지로 한 컨테이너를 실행하고, 배쉬 쉘을 실행 하라는 명령어 이다. 또한, `--rm` 옵션을 추가해서 프로세스 종료 시 컨테이너가 자동으로 제거되도록 했다.
+
+##### 웹 애플리케이션을 실행시켜 보자
+```python
+docker run -d # 백그라운드로 실행
+  -p 4568:4567 # 컨테이너 로컬 4568 포트와 호스트 4567 포트 연결
+  -e ENDPOINT=https://workshop-docker-kr.herokuapp.com/ # 애플리케이션에서 사용할 환경변수 입력
+  -e PARAM_NAME=hanbin # 위와 동일
+  subicura/docker-workshop-app:2 # 이 이미지의 버전2 사용
+```
+위 명령어를 입력하면 실행한 컨테이너의 ID값이 나오며 성공한다.
+
+##### Redis를 실행해보자
