@@ -92,4 +92,103 @@ docker run -d # 백그라운드로 실행
 ```
 위 명령어를 입력하면 실행한 컨테이너의 ID값이 나오며 성공한다.
 
-##### Redis를 실행해보자
+##### Redis를 실행시켜 보자
+`Redis`는 메모리 기반의 `"key" : Value` 구조 데이터 관리 시스템 이다.
+```
+docker run --name=redis -d -p 1234:6379 redis
+```
+`telnet`으로 테스트 해보면 제대로 작동하는 것을 알 수 있다.
+```
+docker run --rm -it mikesplain/telnet docker.for.win.localhost 1234
+
+set hello world
+get hello
+$5
+world
+```
+
+##### MySQL을 실행시켜 보자
+[docker hub mysql](https://hub.docker.com/_/mysql) 에 접속해 보면 여러 설정을 알 수 있고 어떤 환경 변수를 사용할 수 있는지 알 수 있다.
+```
+docker run -d -p 3306:3306 \
+  -e MYSQL_ALLOW_EMPTY_PASSWORD=true \
+  --name mysql \
+  mysql:5.7
+```
+위 명령어로 `mysql` 컨테이너를 생성했다
+```
+> docker exec -it mysql mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+```
+위 명령어로 `mysql` 컨테이너에 접근해서 `mysql` 명령어를 실행시켰다.
+
+## 네트워크를 만들어 보자
+도커 컨테이너 끼리 통신을 할 수 있는 가상 네트워크를 만들 수 있다.
+예를 들어 wordpress과 mysql이 서로 통신을 하려면 서로의 ip를 입력해야 한다. 
+
+그렇게 된다면 mysql 접속한다면 host의 ip를 알고 있거나 도메인으로 관리 해야 한다. 
+하지만 네트워크를 만들어 연결한다면, 컨테이너의 이름만으로 접속 할 수 있다.
+
+아래의 예시를 보자
+```python
+docker network create app-network # app-network라는 이름의 네트워크 생성
+
+docker run --name=ubuntu -d -it --network=app-network ubuntu:16.04 /bin/sh  # ubuntu 라는 이름의 데몬 컨테이너 생성
+docker run --name=ubuntu2 -it --network=app-network ubuntu:16.04 /bin/sh  # ubuntu2 라는 이름의 컨테이너 생성
+# docker network connect app-network ubuntu2 명령어로 이미 생성된 컨테이너를 추가할 수도 있다.
+```
+위와 같이 컨테이너를 연걸 할 수있다.
+
+```python
+docker run -d -p 8080:80 \
+  --network=app-network \
+  -e WORDPRESS_DB_HOST = mysql \ # mysql이라는 이름의 컨테이너를 호스트로 지정
+  -e WORDPRESS_DB_NAME = wp \ # wp라는 이름의 컨테이너를 DB이름으로 지정
+  wordpress
+```
+## docker-compose
+`docker-compose`는 여러개의 컨테이너를 실행시키기고 정의하기 위한 툴이다. `YAML`파일을 사용하여 서비스를 구성한다.
+아래 yml 파일을 보자
+```yml
+# docker-compose.yml
+
+version: '2'
+services: 
+  db: # db라는 이름의 서비스
+    image: mysql:5.7 # mysql:5.7 이미지
+    volumes: # 호스트의 디렉토리를 컨테이너 디렉토리와 연결
+      - ./mysql:/var/lib/mysql # 호스트의 ./mysql 디렉토리에 컨테이너의 /var/lib/mysql 디렉토리 마운트
+    restart: always
+    environment: # 환경 변수 설정
+      MYSQL_ROOT_PASSWORD: wordpress
+      MTSQL_DATABASE: wordpress
+      MTSQL_USER: wordpress
+      MTSQL_PASSWORD: wordpress
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - ./wp:/var/www/html
+    ports: # 외부포트 : 내부포트
+      - "8000:80"
+    restart: always
+    environment: 
+      WORDPRESS_DB_HOST : db:3306
+      WORDPRESS_DB_PASSWORD : wordpress
+```
+위 `yml` 파일을 작성하고 `docker-compose up` 명령어를 입력하면 컨테이너가 생성 및 실행되고, `docker-compose down` 명령어를 입력하면 생성된 컨테이너가 종료된다.
+
+### 궁금한점
+##### 파일명이 `docker-compose.yml`이 아니더라도 실행이 될까?
+`docker-compose -f hello.yml up` 과 같이 `-f`옵션을 붙여 파일을 지정해 줄 수 있다.
