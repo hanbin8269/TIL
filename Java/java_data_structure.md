@@ -40,3 +40,59 @@
 `ex) int a = 10` 에서 10이 리터럴이다.
 
 또한, 모든 리터럴은 상수 풀(constant pool)에 저장되어 있다.
+
+### 배열
+- **동일한** 자료형의 **순차적** 자료구조
+```java
+int[] arr = new int[10];
+int arr[] = new int[10]; 
+// 둘이 같은거다.
+```
+
+#### 특징
+- 배열은 항상 `0 index`부터 시작한다.
+
+#### 선언 방법
+```java
+int[] arr = new int[10];
+
+int arr[] = new int[10]; 
+// 둘이 같은거다.
+
+int[] arr = new int[] {1,2,3};
+
+int[] arr;
+arr = new int[] {1,2,3};
+// 선언과 동시에 초기화
+```
+
+#### 객체 배열
+객체 배열은 참조하는 객체의 주소값을 배열에 넣는다.
+```java
+Book[] library = new Book[5];
+Book[] copyLibrary = new Book[5];
+
+library[0] = new Book("태백산맥1", "조정래");
+library[1] = new Book("태백산맥2", "조정래");
+library[2] = new Book("태백산맥3", "조정래");
+library[3] = new Book("태백산맥4", "조정래");
+library[4] = new Book("태백산맥5", "조정래");
+
+System.arraycopy(library, 0, copyLibrary, 0, 5);
+ 
+library[0].setTitle("나목");
+library[0].setAuthor("박완서");
+
+for( Book book : library) {
+	book.showBookInfo();
+}
+
+System.out.println("===============");
+
+for(Book book : copyLibrary) {
+	book.showBookInfo();
+}
+```
+그렇기 떄문에 위와 같이 복사를 해버리면 `library`의 멤버변수의 값을 바꿔도 `copyLibrary`와 동일한 값을 가지게 된다. 이를 **얕은복사**라고 한다.
+
+이를 방지하기 위해서는 따로 인스턴스를 생성한 다음에 값을 변경해줘야 한다.
