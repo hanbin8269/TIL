@@ -21,7 +21,45 @@ class OutClass{
 
 ## 내부 클래스의 유형
 - 인스턴스 내부 클래스
+```java
+class OutClass{
+    class InClass{
+    }
+}
+```
 - 정적 내부 클래스
+```java
+class OutClass{
+    static class InClass{
+    }
+}
+```
 - 지역 내부 클래스
-- 익명 내부 클래스
 
+```java
+class OutClass {
+
+    Runnable getRunnable(int i) {
+        
+        class MyRunnable implements Runnable{
+            @Override
+            public void run(){
+                System.out.println("runnable");
+            }
+        }
+        
+        return new MyRunnable();
+    }
+}
+```
+- 익명 내부 클래스
+```java
+class OutClass {
+    Runnable runner = new Runnable() {
+        @Override
+        public void run() {
+            System.out.println("runnable");
+        }
+    };
+}
+```
