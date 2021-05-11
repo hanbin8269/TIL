@@ -125,18 +125,20 @@ def get_fields(self):
 ```
 위 코드는 클래스 내부에 Meta 애트리뷰트가 있는지 확인하는 코드이다. 이를 메타클래스로 검증하는 코드를 짜보자
 ```python
-class ModelSerializerMetaclass(type):
+class ModelSerializerMetaclass(SerializerMetaclass):
     def __new__(mcs, *args, **kwargs):
         name, bases, namespace = args
-        is_meta = self._check_meta(bases, namespace)
+        if name not in ("ModelSerializer","HyperlinkedModelSerializer"):
+            mcs._check_meta(name,namespace)
 
-        if not is_meta:
-            raise Exception()
+        return super().__new__(mcs, *args, **kwargs)
 
-        return super().new(mcs, *args, **kwargs)
+    def _check_meta(name,namespace):
+        if not namespace.get("Meta", None):
+            raise Exception(f'Class {name} missing "Meta" attribute')
+        return
 
-    def _check_meta(self, bases, namespace):
-        if not namespcae.get("Meta", None):
-            return False
-        return True
+
+class ModelSerializer(Serializer, metaclass=ModelSerializerMetaclass):
+    pass
 ```
