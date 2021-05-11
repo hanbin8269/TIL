@@ -21,7 +21,7 @@
 
 파이썬의 `type()` 빌트인 함수를 사용하면 객체의 타입을 알 수 있다.
 
-```
+```python
 class Test:
     pass
 t = Test()
@@ -41,7 +41,7 @@ type(1)
 
 그렇다면, `Test` 클래스의 타입은 존재할까?
 
-```
+```python
 class Test:
     pass
 type(Test)
@@ -55,7 +55,7 @@ type(Test)
 
 그전에 몇가지 메타클래스의 매직 메소드에 대해 알아보자
 
-```
+```python
 class TestMeta(type):
     def __prepare__(mcs, *args, **kwarg): # 메타 클래스가 결정되었을 때 (mro가 구성된 후) 클래스 정의를 위해 호출된다.
         # mcs = metaclass
@@ -101,7 +101,7 @@ t = Test()
 싱글톤 패턴은 클래스의 인스턴스화를 항상 하나의 개체로만 제한하는 설계 패턴이다.  
 구현해 보자면
 
-```
+```python
 class SingletonMeta(type):
     _instances = {}
 
@@ -129,7 +129,7 @@ print(id(sl2))
 
 DRF의 **ModelSerializer** 에는 내부 Meta 클래스가 없다면 오류를 일으킨다. 이에 대한 오류 검증을 DRF에서는 get\_fields() 메소드에 구현해 두었는데, 이를 메타 클래스로 검증 할 수 있을 것 같다.
 
-```
+```python
 def get_fields(self):
     ...
 
@@ -143,7 +143,7 @@ def get_fields(self):
 
 위 코드는 클래스 내부에 Meta 애트리뷰트가 있는지 확인하는 코드이다. 이를 메타클래스로 검증하는 코드를 짜보자
 
-```
+```python
 class ModelSerializerMetaclass(SerializerMetaclass):
     def __new__(mcs, *args, **kwargs):
         name, bases, namespace = args
