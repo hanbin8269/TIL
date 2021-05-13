@@ -23,7 +23,7 @@
     * [Django Test 코드 작성하기](https://github.com/hanbin8269/TIL/blob/main/Python/django-test.md)
 
 ## `AWS`
-* aws
+* `aws`
     * [AWS 솔루션 아키텍트 문제 정리](https://github.com/hanbin8269/TIL/blob/main/AWS/aws-certified-saa-01.md)
     * [기본적인 AWS vpc 세팅](https://github.com/hanbin8269/TIL/blob/main/AWS/aws-vpc-setting.md)
 
