@@ -22,20 +22,25 @@
     * [Django 프로젝트 구조 잡기](https://github.com/hanbin8269/TIL/blob/main/Python/django-project-setting.md)
     * [Django Test 코드 작성하기](https://github.com/hanbin8269/TIL/blob/main/Python/django-test.md)
 
-## `AWS`
-* `aws`
-    * [AWS 솔루션 아키텍트 문제 정리](https://github.com/hanbin8269/TIL/blob/main/AWS/aws-certified-saa-01.md)
-    * [기본적인 AWS vpc 세팅](https://github.com/hanbin8269/TIL/blob/main/AWS/aws-vpc-setting.md)
+
+## `DevOps`
+* [CI/CD란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/DevOps/what-is-CI-CD.md)  
+#####
+* `AWS`
+    * [AWS 솔루션 아키텍트 문제 정리](https://github.com/hanbin8269/TIL/blob/main/DevOps/aws-certified-saa-01.md)
+    * [기본적인 AWS vpc 세팅](https://github.com/hanbin8269/TIL/blob/main/DevOps/aws-vpc-setting.md)
+
+* `docker`
+    * [Docker 컨테이너 사용법](https://github.com/hanbin8269/TIL/blob/main/DevOps/docker-how-to-use-container.md)
+    * [Docker 이미지 사용법 - 공사중](https://github.com/hanbin8269/TIL/blob/main/DevOps/docker-how-to-use-image.md)
+    * [Docker란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/DevOps/what-is-docker.md)
+* `Jenkins`
+    * [젠킨스란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/DevOps/what-is-jenkins.md)
 
 ## `Database`
 * `ORM`
     * [ORM이란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/Database/what-is-ORM.md)
 
-## `Docker`
-* `docker`
-    * [Docker 컨테이너 사용법](https://github.com/hanbin8269/TIL/blob/main/Docker/docker-how-to-use-container.md)
-    * [Docker 이미지 사용법 - 공사중](https://github.com/hanbin8269/TIL/blob/main/Docker/docker-how-to-use-image.md)
-    * [Docker란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/Docker/what-is-docker.md)
 
 ## `Network`
 * `세션`
