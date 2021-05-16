@@ -24,7 +24,8 @@
 
 
 ## `DevOps`
-* [CI/CD란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/DevOps/what-is-CI-CD.md)  
+* [CI/CD란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/DevOps/what-is-CI-CD.md)
+* [통상적인 배포 흐름](https://github.com/hanbin8269/TIL/blob/main/DevOps/about-deploy-flow.md)  
 #####
 * `AWS`
     * [AWS 솔루션 아키텍트 문제 정리](https://github.com/hanbin8269/TIL/blob/main/DevOps/aws-certified-saa-01.md)
