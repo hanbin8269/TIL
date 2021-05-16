@@ -2,10 +2,10 @@
 
 ## 기본 개념
 - Java Runtime 위에서 동작하는 자동화 서버
-    -> Jenkins가 돌아갈려면 Java가 깔려 있어야 함
-- 빌드, 테스트, 배포 등 모든 것을 자동화 해주는 자동화 서버
-- 다양한 플러그인들을 활용해서 각종 자동화 작업을 처리할 수 있음
-- 일련의 자동화 작업의 순서들의 집합인 pipeline을 통해 CI/CD 파이프라인을 구축함
+    -> Jenkins가 돌아갈려면 **Java가 깔려 있어야 함**
+- **빌드, 테스트, 배포 등 모든 것을 자동화** 해주는 자동화 서버
+- **다양한 플러그인**들을 활용해서 각종 자동화 작업을 처리할 수 있음
+- 일련의 자동화 작업의 순서들의 집합인 **pipeline을 통해 CI/CD 파이프라인을 구축**함
 
 
 ### Plugin?
@@ -23,9 +23,9 @@
 
 ### Pipeline?
 
-여러 플러그인들을 이 파이프라인에서 용도에 맞게 사용하고 정의함으로써 파이프라인을 통해 서비스가 배포된다.
+여러 플러그인들을 **이 파이프라인에서 용도에 맞게 사용하고 정의함**으로써 파이프라인을 통해 서비스가 배포된다.
 
-두가지 형태의 **Pipeline Syntax(Declarative, Scripted Pipeline)**이 있는데, 가독성이 높은 문법을 가진 **Declarative Pipeline Syntax**가 많이 사용된다.
+두가지 형태의 **Pipeline Syntax(Declarative, Scripted Pipeline)** 이 있는데, 가독성이 높은 문법을 가진 **Declarative Pipeline Syntax**가 많이 사용된다.
 
 #### Pipeline Syntax
 ##### Sesctions
