@@ -41,10 +41,10 @@
     ex) build, deploy 등
 - Steps section
     한 스테이지 안에서 단계로 일련의 스텝을 보여준다.
-으로 구성되어 있다.
 
+Jenkins pipeline 플러그인은 위와 같은 단계로 이루어져 있다.
 ##### Declareative
-각 스테이지 안에서 어떤 일들을 할 것인지 정의하는 것
+각 스테이지 안에서 어떤 일들을 할 것인지 정의하는 것이다.
 Environment, stage, option, parameters, trigger, when 등의 Declarative가 있다.
 
 - Environment : 어떤 pipeline이나 stage scope의 환경 변수를 설정한다.
