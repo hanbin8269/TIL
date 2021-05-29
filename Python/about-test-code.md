@@ -73,3 +73,13 @@ $ python .\test2.py HelloTest.test_failure
 $ python -m unittest discover 
 ```
 를 입력하면 하위 디렉토리의 모든 테스트를 실행한다. (기본적으로 "test*.py" 포맷의 파일을 찾아 실행한다.)
+
+## 의존성이 있는 테스트의 경우
+```python
+def get_username(user_id):
+    user = db.user.query(user_id = user_id)
+    return user.name
+```
+위와 같은 코드는 DB가 있어야 테스트가 가능하다. 또한, 테스트 전에 데이터를 넣어주어야 한다. 
+
+이럴때는 **Mock** 이라는 것을 사용한다.
