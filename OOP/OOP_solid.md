@@ -21,7 +21,6 @@ Open/Closed Principle
 public class MemberService {
     private MemberRepository memberRepository = new MemoryMemberRepository();
 }
-////
 
 public class MemberService {
     // private MemberRepository memberRepository = new MemoryMemberRepository();
@@ -32,7 +31,7 @@ public class MemberService {
 
 이 문제점을 해결하기 위해서 객체를 생성하고, 연관 관계를 맺어주는 별도의 **조립, 설정자**가 필요하다.  
 
-## LSP 리스코프 치환 원칙
+## LSP 리스코프 치환 원칙 
 Liskov Substitution Principle
 - 프로그램의 객체는 **프로그램의 정확성**을 깨뜨리지 않으면서 하위 타입의 인스턴스로 바꿀 수 있어야 한다.
 - 다형성에서 하위 클래스가 **인터페이스의 규약**을 다 지켜야 한다는 원칙이다. 인터페이스를 구현한 객체를 믿고 사용하려면, 이 원칙이 필요하다.
@@ -58,7 +57,9 @@ public class MemberService {
     private MemberRepository memberRepository = new MemoryMemberRepository();
 }
 ```
-위 코드를 보면 구현 클래스에 의존하고 있다. 그렇기 때문에 `DIP`에 위반된다.
+
+위 예제를 보면 `MemberService`라는 구현 객체가 `MemoryMemberRepository`라는 **구현 객체**에게 의존하고 있다. 이는 `DIP`를 위반하는 사례이다.
+
 
 ----------
 SOLID 5원칙을 잘 살펴보았다. 객체 지향의 핵심을 다형성 이라고 알고 있었는데, 위에서 언급한 문제들을 보면 다형성 만으로는 `OCP`, `DIP`를 지킬 수 없다는 것을 알게되었다. 무언가 더 방법이 없을까?
