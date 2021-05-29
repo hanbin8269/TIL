@@ -5,6 +5,9 @@
 
 ---
 ## `Python`
+
+* [Python Mock이란](https://github.com/hanbin8269/TIL/blob/main/Python/python-mock.md)
+* [테스트 코드에 대해서](https://github.com/hanbin8269/TIL/blob/main/Python/about-test-code.md)
 * [일급객체란 무엇인가](https://github.com/hanbin8269/TIL/blob/main/Python/first-class-citizen.md)
 * [Python 언더스코어(_) 사용법](https://github.com/hanbin8269/TIL/blob/main/Python/how-to-use-underscore.md)
 * [ASGI란](https://github.com/hanbin8269/TIL/blob/main/Python/python-asgi.md)
