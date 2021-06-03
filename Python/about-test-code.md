@@ -83,3 +83,31 @@ def get_username(user_id):
 위와 같은 코드는 DB가 있어야 테스트가 가능하다. 또한, 테스트 전에 데이터를 넣어주어야 한다. 
 
 이럴때는 **Mock** 이라는 것을 사용한다.
+
+```python
+exist_user = User.filter(User.email == email).first()
+```
+위와 같이 `filter` 메서드의 결과값을 `first` 메서드로 처리하는 함수는 아래와 같이 처리 할 수 있다.
+```python
+from unittest import patch
+
+
+class TestUserController(TestCase):
+    @patch("app.models.users.MentoringField.filter")
+    def test_update_user_successful(
+        self, mock_mentoring_field_filter
+    ):
+        credentials = {
+            "mentoring_fields": ["backend"],
+            "name": "hanbin",
+            "self_introduction": "heelo, im hanbin",
+            "phone_number": "01082693188",
+            "profile_image": "s3.13224",
+        }
+
+        mock_mentoring_field_filter.first().return_value = "backend"  # 여기!
+        try:
+            user_instance = UserController().update_user(1, **credentials)
+        except HTTPException as exe:
+            self.fail(exe.detail)
+```
