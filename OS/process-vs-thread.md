@@ -12,7 +12,6 @@
 앞서 말한 파이썬 코드와 디스코드 파일은 내 PC에 잘 저장되어 있다. 
 
 하지만 내가 눌러 실행하기 전까지는 그저 **코드 덩어리** 이다.
-
 ## 프로세스란?
 프로세서는 **메모리에 적재되어 실행되고 있는 프로그램**이라고 정의를 내릴 수 있다.
 
@@ -20,6 +19,20 @@
 ![process-vs-thread-01](../images/process-vs-thread-01.png)
 
 위 사진은 윈도우 작업관리자를 실행한 화면이다. 
-
 사진을 보면 앞서 말한 디스코드 **프로그램** 이 메모리에 **적재** 되어 **실행중**인 것을 볼수있다.
 
+## 스레드란?
+스레드는 프로세스 내에 할당된 메모리, CPU 등의 자원을 사용하는 실행 단위이다.
+![process-vs-thread.md-01.png](../images/process-vs-thread.md-01.png)
+위 그림과 같이 프로세스의 Code, Data, Heap 영역만 공유하며 Stack 영역은 별도로 할당 받는다.
+
+
+## Stack, Code, Data, Heap?
+#### Stack
+#### Code
+Code 영역은 프로세스가 실행 할 코드가 기계어로 저장되어 있는 공간이다. 중간에 변경할 수 없도록 Read-Only로 지정되어 있다.
+#### Data
+Data 영역은 전역변수 (Global)
+
+### Ref.
+https://covenant.tistory.com/231
