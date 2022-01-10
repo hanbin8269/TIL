@@ -1,8 +1,8 @@
-# 로그인 정보를 분리시키는 방법
+# 로그인
 
 서비스를 구현하다보면 하나의 계정에 여러 로그인 방식을 붙이게 된다.
 - username / password
-- OAuth 소셜 로그인
+- 소셜 로그인
 - 휴대폰 인증
 
 이런 경우 DB 스키마를 어떻게 작성해야 할까?
@@ -18,3 +18,5 @@
 
 그러나 아래와 같이 Account 에는 계정정보를 담고, 로그인 정보를 담는 테이블을 분리시키면 여러 로그인 기능을 사용할 수 있게 된다.
 ![how-to-seperate-account-02](../images/how-to-seperate-account-02.png)
+
+이제 access token 을 return 하는 `/login`, `/login/oauth`, `/login/by-phone` 등 여러 로그인 엔드포인트를 만들어 다양한 로그인 기능을 구현할 수 있다.
