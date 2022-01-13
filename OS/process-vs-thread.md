@@ -29,10 +29,13 @@
 
 ## Stack, Code, Data, Heap?
 #### Stack
+Stack 영역은 지역 변수, 호출된 함수들이 쌓이는 공간이다.
 #### Code
-Code 영역은 프로세스가 실행 할 코드가 기계어로 저장되어 있는 공간이다. 중간에 변경할 수 없도록 Read-Only로 지정되어 있다.
+Code 영역은 프로세스가 실행 할 코드가 컴파일되어 저장되어 있는 공간이다. 중간에 변경할 수 없도록 Read-Only로 지정되어 있다.
 #### Data
-Data 영역은 전역변수 (Global)
-
+Data 영역은 전역변수(global), 정적변수(static), 배열(array), 구조체(structure)등이 저장된다.
+#### Heap
+Heap 영역은 런타임에 크기가 결정되는 메모리 영역이다. Memory pool 이라고 생각하면 된다.
 ### Ref.
+https://www.youtube.com/watch?v=cUKTYA6LUTk
 https://covenant.tistory.com/231
